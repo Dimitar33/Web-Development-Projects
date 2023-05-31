@@ -1,39 +1,59 @@
 var gamePatern = [];
 var userPatern = [];
+var level = 0;
+var started = false;
 
 $(document).keypress(function () {
-  $("h1").text("Level");
 
-  let color = random();
+  if (!started) {
+    let color = random();
 
-  clicked(color);
+    gamePatern.push(clicked(color));
+    
+  $("h1").text("Level " + level);
+    started = true;
 
-  $(".btn").click(function () {
-    clicked(this.classList[1]);
+  }
 
-    userPatern.push(this.classList[1]);
-
-    if (userPatern == gamePatern) {
-
-        setTimeout(() => {
-            clicked(random());
-        }, 1000);
-    }
-    else{
-        $(document).Audio.src = "./sounds/wrong.mp3";
-        audio.play();
-    }
-    console.log(userPatern);
-
-  });
-
- 
 });
+
+$(".btn").click(function () {
+  
+  userPatern.push(clicked(this.classList[1]));
+
+  checkAnswear(userPatern.length - 1);
+});
+
+function checkAnswear(level) {
+
+  if (userPatern[level] === gamePatern[level]) {
+
+    if (gamePatern.length === userPatern.length) {
+      
+      userPatern = [];
+      level++;
+      $("h1").text("Level " + level);
+      setTimeout(() => {
+        gamePatern.push(clicked(random()));
+      }, 1000);
+    }
+
+  } else {
+    var audioo = new Audio();
+    audioo.src = "./sounds/wrong.mp3";
+    audioo.play();
+
+    $("h1").text("game over, press any key to restart");
+
+    restart();
+  }
+}
 
 function clicked(color) {
   var audio = new Audio();
 
   $("." + color).addClass("pressed");
+  let returnColor;
 
   setTimeout(() => {
     $("." + color).removeClass("pressed");
@@ -42,24 +62,29 @@ function clicked(color) {
   switch (color) {
     case "red":
       audio.src = "./sounds/red.mp3";
+      returnColor = "red";
       break;
 
     case "blue":
       audio.src = "./sounds/blue.mp3";
+      returnColor = "blue";
       break;
 
     case "green":
       audio.src = "./sounds/green.mp3";
+      returnColor = "green";
       break;
 
     case "yellow":
       audio.src = "./sounds/yellow.mp3";
+      returnColor = "yellow";
       break;
 
     default:
       break;
   }
   audio.play();
+  return returnColor;
 }
 
 function random() {
@@ -84,4 +109,14 @@ function random() {
   }
 
   return color;
+}
+
+function restart (){
+
+  started = false;
+  level = 0;
+
+  
+  userPatern = [];
+  gamePatern = [];
 }
