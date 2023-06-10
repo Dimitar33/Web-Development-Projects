@@ -28,4 +28,7 @@ inq.prompt([{
 
         console.log(data);
     });
+}).catch((err) => {
+
+    if(err.isTryError) throw err.message
 })
